@@ -1,0 +1,14 @@
+{
+  "name": "mstuca-schedule-node",
+  "version": "0.0.0",
+  "description": "MSTUCA schedule parser and API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alexander Sivashev <shyr1punk@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "python-shell": "^0.3.0"
+  }
+}
