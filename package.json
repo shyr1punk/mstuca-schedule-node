@@ -1,6 +1,6 @@
 {
   "name": "mstuca-schedule-node",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "MSTUCA schedule parser and API",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,7 @@
   "author": "Alexander Sivashev <shyr1punk@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "python-shell": "^0.3.0"
+    "python-shell": "^0.3.0",
+    "request": "^2.69.0"
   }
 }
