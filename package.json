@@ -9,6 +9,7 @@
   "author": "Alexander Sivashev <shyr1punk@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "iconv-lite": "^0.4.13",
     "python-shell": "^0.3.0",
     "request": "^2.69.0"
   }
