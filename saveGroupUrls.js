@@ -18,7 +18,7 @@ MongoClient.connect(url, function(err, db) {
     getScheduleFilesUrls(specialityUrl, groups => {
       const groupsCount = groups.length;
       if(!groupsCount) {
-        callback(null, db);
+        callback();
         return;
       }
       collection.insertMany(groups, function(err, result) {
@@ -26,7 +26,7 @@ MongoClient.connect(url, function(err, db) {
         assert.equal(groupsCount, result.result.n);
         assert.equal(groupsCount, result.ops.length);
         console.log(`Inserted ${groupsCount} groups into the groups collection`);
-        callback(null, db);
+        callback();
       });
     });
   }, err => {
