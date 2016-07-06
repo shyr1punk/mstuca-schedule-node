@@ -4,13 +4,12 @@ const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 const async = require('async');
 
+const mongodbConnectUrl = require('./config.js').mongodbConnectUrl;
+
 const getScheduleFilesUrls = require('./url-parser').getScheduleFilesUrls;
 const specialityUrls = require('./url-parser/specialityUrls');
 
-// Connection URL
-const url = 'mongodb://localhost:27017/schedule';
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
+MongoClient.connect(mongodbConnectUrl, function(err, db) {
   assert.equal(null, err);
   console.log("Connected correctly to server");
   const collection = db.collection('groups');
