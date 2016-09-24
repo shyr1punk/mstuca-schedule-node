@@ -6,6 +6,8 @@ const mongodbConnectUrl = require('./config.js').mongodbConnectUrl;
 
 const { Faculty, Speciality, Group, Model } = Models;
 
+const getSpecialityUrls = require('./saveGroupUrls');
+
 const app = express();
 
 app.get('/', (req, res) => {
@@ -37,6 +39,16 @@ app.get('/menu', (req, res) => {
     mongoose.connection.close();
   });
 });
+
+app.get('/get-groups', (req, res) => {
+  getSpecialityUrls((err, result) => {
+    if(err) {
+      res.send(err);
+    } else {
+      res.json(result);
+    }
+  })
+})
 
 app.listen(3333, () => {
   console.log('Schedule app listen at 3333');

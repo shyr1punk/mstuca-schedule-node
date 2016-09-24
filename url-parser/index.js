@@ -7,9 +7,11 @@ const getGroupURLMapping = require('./getGroupUrls').getGroupURLMapping;
 const getScheduleFilesArray = require('./getGroupUrls').getScheduleFilesArray;
 
 function getScheduleFilesUrls(specialityUrls, callback) {
-  request(encodeURI(specialityUrls)).pipe(iconv.decodeStream('win1251')).collect(function(err, body) {
-    const groups = getScheduleFilesArray(body);
-    callback(getGroupURLMapping(groups));
+  return new Promise((resolve, reject) => {
+    request(encodeURI(specialityUrls)).pipe(iconv.decodeStream('win1251')).collect(function(err, body) {
+      const groups = getScheduleFilesArray(body);
+      resolve(getGroupURLMapping(groups));
+    });
   });
 }
 
