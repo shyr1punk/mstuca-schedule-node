@@ -1,8 +1,10 @@
-const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
-
-const mongodbConnectUrl = require('./config.js').mongodbConnectUrl;
+const mongoose = require('mongoose');
 const express = require('express');
+
+var Models = require('./models');
+const mongodbConnectUrl = require('./config.js').mongodbConnectUrl;
+
+const { Faculty, Speciality, Group, Model } = Models;
 
 const app = express();
 
@@ -12,16 +14,27 @@ app.get('/', (req, res) => {
   });
 });
 
-app.get('/groups', (req, res) => {
-  MongoClient.connect(mongodbConnectUrl, function(err, db) {
-    assert.equal(null, err);
-    console.log("Connected correctly to server");
-    const groups = db.collection('groups');
-    groups.find({}).toArray((err, groups) => {
-      assert.equal(null, err);
-      assert.ok(groups != null);
-      res.json(groups);
+app.get('/menu', (req, res) => {
+  mongoose.connect(mongodbConnectUrl);
+  Faculty.find({}).then(result => {
+    const responseData = {
+      groups: [] // TODO: заменить на реальные данные
+    };
+    responseData.faculties = result.map(faculty => ({
+      short: faculty.short,
+      id: faculty._id
+    }));
+    Speciality.find({}).exec().then(result => {
+      responseData.specialities = result;
+      res.json(responseData);
+      mongoose.connection.close();
+    }).catch(err => {
+      console.log(err);
+      mongoose.connection.close();
     });
+  }).catch(err => {
+    console.log(err);
+    mongoose.connection.close();
   });
 });
 

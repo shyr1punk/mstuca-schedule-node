@@ -12,7 +12,7 @@ var Faculty = mongoose.model('Faculty', facultySchema);
 var specialitySchema = new Schema({
     short: String,
     faculty: {
-        type: Schema.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Faculty'
     }
 });
@@ -22,11 +22,11 @@ var Speciality = mongoose.model('Speciality', specialitySchema);
 var groupSchema = new Schema({
     short: String,
     speciality: {
-        type: Schema.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Speciality'
     },
     faculty: {
-        type: Schema.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Faculty'
     }
 });
@@ -42,7 +42,7 @@ var lessonSchema = new Schema({
     sub_group: Number,
     auditory: String,
     group: {
-        type: Schema.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Group'
     }
 });

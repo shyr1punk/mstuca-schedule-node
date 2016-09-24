@@ -1,10 +1,11 @@
 var mongoose = require('mongoose');
 
 var Models = require('./models');
+const mongodbConnectUrl = require('./config.js').mongodbConnectUrl;
 
 const { Faculty, Speciality, Group, Model } = Models;
 
-mongoose.connect('mongodb://localhost/schedule');
+mongoose.connect(mongodbConnectUrl);
 
 const faculties = [
   {
@@ -39,37 +40,37 @@ Faculty.insertMany(faculties, (err, docs) => {
 const specialities = [
   {
     short: 'БТП',
-    faculty: faculties[0]
+    faculty: faculties[0]._id
   }, {
     short: 'M',
-    faculty: faculties[0]
+    faculty: faculties[0]._id
   }, {
     short: 'РС',
-    faculty: faculties[1]
+    faculty: faculties[1]._id
   }, {
     short: 'УВД',
-    faculty: faculties[1]
+    faculty: faculties[1]._id
   }, {
     short: 'АК',
-    faculty: faculties[1]
+    faculty: faculties[1]._id
   }, {
     short: 'ЭВМ',
-    faculty: faculties[2]
+    faculty: faculties[2]._id
   }, {
     short: 'ПМ',
-    faculty: faculties[2]
+    faculty: faculties[2]._id
   }, {
     short: 'БИ',
-    faculty: faculties[2]
+    faculty: faculties[2]._id
   }, {
     short: 'ОП',
-    faculty: faculties[3]
+    faculty: faculties[3]._id
   }, {
     short: 'СО',
-    faculty: faculties[3]
+    faculty: faculties[3]._id
   }, {
     short: 'ЭК',
-    faculty: faculties[3]
+    faculty: faculties[3]._id
   }
 ].map(speciality => new Speciality(speciality));
 
