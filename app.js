@@ -22,7 +22,7 @@ app.get('/menu', (req, res) => {
     };
     responseData.faculties = result.map(faculty => ({
       short: faculty.short,
-      id: faculty._id
+      _id: faculty._id
     }));
     Speciality.find({}).exec().then(result => {
       responseData.specialities = result;
