@@ -18,22 +18,20 @@ app.get('/', (req, res) => {
 
 app.get('/menu', (req, res) => {
   mongoose.connect(mongodbConnectUrl);
-  Faculty.find({}).then(result => {
-    const responseData = {
-      groups: [] // TODO: заменить на реальные данные
-    };
-    responseData.faculties = result.map(faculty => ({
+  Promise.all([
+    Faculty.find({}),
+    Speciality.find({}),
+    Group.find({})
+  ]).then(results => {
+    mongoose.connection.close();
+    const responseData = {};
+    responseData.faculties = results[0].map(faculty => ({
       short: faculty.short,
       _id: faculty._id
     }));
-    Speciality.find({}).exec().then(result => {
-      responseData.specialities = result;
-      res.json(responseData);
-      mongoose.connection.close();
-    }).catch(err => {
-      console.log(err);
-      mongoose.connection.close();
-    });
+    responseData.specialities = results[1];
+    responseData.groups = results[2];
+    res.json(responseData);
   }).catch(err => {
     console.log(err);
     mongoose.connection.close();
