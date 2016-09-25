@@ -7,6 +7,7 @@ const mongodbConnectUrl = require('./config.js').mongodbConnectUrl;
 const { Faculty, Speciality, Group, Model } = Models;
 
 const getSpecialityUrls = require('./saveGroupUrls');
+const parseSingleXlsAndWrite = require('./file-parser/parseSingleXlsAndWrite');
 
 const app = express();
 
@@ -35,7 +36,7 @@ app.get('/menu', (req, res) => {
   });
 });
 
-app.get('/get-groups', (req, res) => {
+app.get('/admin/insert-groups', (req, res) => {
   getSpecialityUrls((err, result) => {
     if(err) {
       res.send(err);
@@ -43,7 +44,28 @@ app.get('/get-groups', (req, res) => {
       res.json(result);
     }
   })
-})
+});
+
+app.get('/admin/group-list', (req, res) => {
+  mongoose.connect(mongodbConnectUrl);
+  Group.find({}).then(groups => {
+    mongoose.connection.close();
+    res.json(groups);
+  }, err => {
+    mongoose.connection.close();
+    res.send(err);
+  });
+});
+
+app.get('/admin/parse-group/:id', (req, res) => {
+  mongoose.connect(mongodbConnectUrl);
+  Group.findById(req.params.id)
+    .then(group => group.url)
+    .then(groupUrl => parseSingleXlsAndWrite(groupUrl))
+    .then(result => {
+      res.json(result);
+    });
+});
 
 app.listen(3333, () => {
   console.log('Schedule app listen at 3333');
