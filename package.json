@@ -13,6 +13,7 @@
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "iconv-lite": "^0.4.13",
+    "moment": "^2.15.1",
     "mongodb": "^2.2.10",
     "mongoose": "^4.6.1",
     "python-shell": "^0.3.0",

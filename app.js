@@ -58,13 +58,28 @@ app.get('/admin/group-list', (req, res) => {
 });
 
 app.get('/admin/parse-group/:id', (req, res) => {
-  mongoose.connect(mongodbConnectUrl);
-  Group.findById(req.params.id)
-    .then(group => group.url)
-    .then(groupUrl => parseSingleXlsAndWrite(groupUrl))
-    .then(result => {
-      res.json(result);
-    });
+  if(typeof req.params.id === 'string') {
+    parseSingleXlsAndWrite(req.params.id)
+      .then(
+        insertedCount => {
+          res.json({
+            result: 'OK',
+            groupId: req.params.id,
+            insertedCount
+          });
+        },
+        mongooseErr => {
+          res.json({
+            result: 'ERROR',
+            mongooseErr
+          });
+        }
+      );
+  } else {
+    res.json({
+      error: `:id parameter is invalid. Got ${req.params.id}`
+    })
+  }
 });
 
 app.listen(3333, () => {
