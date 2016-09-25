@@ -32,12 +32,17 @@ const getSpecialityUrls = callback => {
         )
       ).then(results => {
         const groups = results.reduce((element, result) => {
-          console.log(result);
           result = result.concat(element);
           return result;
         }, []);
-        callback(null, groups);
-        mongoose.connection.close();
+        Group.insertMany(groups, (err, docs) => {
+          if (err) {
+            callback(err);
+          } else {
+            callback(null, `${docs.length} groups were successfully stored.`);
+          }
+          mongoose.connection.close();
+        });
       }, err => {
         console.log(err);
         mongoose.connection.close();
