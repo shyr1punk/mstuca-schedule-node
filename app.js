@@ -24,14 +24,11 @@ app.get('/menu', (req, res) => {
     Group.find({})
   ]).then(results => {
     mongoose.connection.close();
-    const responseData = {};
-    responseData.faculties = results[0].map(faculty => ({
-      short: faculty.short,
-      _id: faculty._id
-    }));
-    responseData.specialities = results[1];
-    responseData.groups = results[2];
-    res.json(responseData);
+    res.json({
+      faculties: results[0],
+      specialities: results[1],
+      groups: results[2]
+    });
   }).catch(err => {
     console.log(err);
     mongoose.connection.close();
