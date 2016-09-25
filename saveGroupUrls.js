@@ -11,13 +11,6 @@ const models = require('./models');
 const { Speciality, Group } = models;
 
 
-/**
- * (specialityUrl, index) => ({
-   url: getScheduleFilesUrls(specialityUrl),
-   speciality: specialities[index]._id,
-   faculty: specialities[index].faculty._id
- })
-*/
 const getSpecialityUrls = callback => {
   mongoose.connect(mongodbConnectUrl);
   Speciality.find({})
