@@ -4,7 +4,7 @@ const express = require('express');
 var Models = require('./models');
 const mongodbConnectUrl = require('./config.js').mongodbConnectUrl;
 
-const { Faculty, Speciality, Group, Model } = Models;
+const { Faculty, Speciality, Group, Model, Lesson } = Models;
 
 const getSpecialityUrls = require('./saveGroupUrls');
 const parseSingleXlsAndWrite = require('./file-parser/parseSingleXlsAndWrite');
@@ -34,6 +34,15 @@ app.get('/menu', (req, res) => {
     console.log(err);
     mongoose.connection.close();
   });
+});
+
+app.get('/schedule/:groupId', (req, res) => {
+  mongoose.connect(mongodbConnectUrl);
+  Lesson.find({group: req.params.groupId}).then(
+    lessons => {
+      res.send(lessons);
+    }
+  );
 });
 
 app.get('/admin/insert-groups', (req, res) => {
