@@ -21,6 +21,7 @@ var Speciality = mongoose.model('Speciality', specialitySchema);
 
 var groupSchema = new Schema({
     short: String,
+    url: String,
     speciality: {
         type: Schema.Types.ObjectId,
         ref: 'Speciality'

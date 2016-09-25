@@ -28,8 +28,18 @@ const getSpecialityUrls = callback => {
       );
       Promise.all(specialityUrls.map(specialityUrl =>
         getScheduleFilesUrls(specialityUrl)
-      )).then(results => {
+      )).then(scheduleFilesUrls =>
+        scheduleFilesUrls.map((scheduleFilesUrl, index) =>
+          scheduleFilesUrl.map(group => ({
+            short: group.group,
+            url: group.url,
+            speciality: specialities[index]._id,
+            faculty: specialities[index].faculty._id
+          }))
+        )
+      ).then(results => {
         const groups = results.reduce((element, result) => {
+          console.log(result);
           result = result.concat(element);
           return result;
         }, []);
