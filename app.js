@@ -40,7 +40,12 @@ app.get('/schedule/:groupId', (req, res) => {
   mongoose.connect(mongodbConnectUrl);
   Lesson.find({group: req.params.groupId}).then(
     lessons => {
+      mongoose.connection.close();
       res.send(lessons);
+    },
+    err => {
+      mongoose.connection.close();
+      res.send(err);
     }
   );
 });
