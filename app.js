@@ -60,7 +60,7 @@ app.get('/admin/insert-groups', (req, res) => {
   })
 });
 
-app.get('/admin/group-list', (req, res) => {
+app.get('/admin/groups', (req, res) => {
   mongoose.connect(mongodbConnectUrl);
   Group.find({}).then(groups => {
     mongoose.connection.close();
@@ -71,7 +71,7 @@ app.get('/admin/group-list', (req, res) => {
   });
 });
 
-app.get('/admin/parse-group/:id', (req, res) => {
+app.get('/admin/groups/:id/update', (req, res) => {
   if(typeof req.params.id === 'string') {
     parseSingleXlsAndWrite(req.params.id)
       .then(

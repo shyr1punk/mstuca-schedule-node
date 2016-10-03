@@ -58,7 +58,20 @@ module.exports = (groupId) => {
     .then(result => {
       mongoose.connection.close();
       console.log(`Inserted ${result.length} lessons for groupId ${groupId}`);
-      return result.length;
+      return Group
+        .findByIdAndUpdate(groupId, {
+          $set: { lessonsCount: result.length }
+        }, {
+          new: true
+        })
+        .then(result => {
+          console.log('Update lessonsCount complete');
+          return result.length;
+        }, err => {
+          console.log('Update lessonsCount failed');
+          console.log(err);
+          return result.length;
+        });
     }, err => {
       mongoose.connection.close();
       console.log(err);

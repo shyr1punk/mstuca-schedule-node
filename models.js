@@ -29,7 +29,8 @@ var groupSchema = new Schema({
     faculty: {
         type: Schema.Types.ObjectId,
         ref: 'Faculty'
-    }
+    },
+    lessonsCount: { type: Number, default: 0 }
 });
 
 var Group = mongoose.model('Group', groupSchema);
