@@ -22,13 +22,15 @@ app.get('/menu', (req, res) => {
   Promise.all([
     Faculty.find({}),
     Speciality.find({}),
-    Group.find({})
+    Group.find({}),
+    Lesson.find().distinct('teacher')
   ]).then(results => {
     mongoose.connection.close();
     res.json({
       faculties: results[0],
       specialities: results[1],
-      groups: results[2]
+      groups: results[2],
+      teachers: results[3].sort()
     });
   }).catch(err => {
     console.log(err);
