@@ -38,7 +38,7 @@ app.get('/menu', (req, res) => {
   });
 });
 
-app.get('/schedule/:groupId', (req, res) => {
+app.get('/schedule/groups/:groupId', (req, res) => {
   mongoose.connect(mongodbConnectUrl);
   Lesson.find({group: req.params.groupId}).then(
     lessons => {
@@ -51,6 +51,20 @@ app.get('/schedule/:groupId', (req, res) => {
     }
   );
 });
+
+app.get('/schedule/teachers/:teacherName', (req, res) => {
+  mongoose.connect(mongodbConnectUrl);
+  Lesson.find({teacher: req.params.teacherName}).then(
+    lessons => {
+      mongoose.connection.close();
+      res.send(lessons);
+    },
+    err => {
+      mongoose.connection.close();
+      res.send(err);
+    }
+  );
+})
 
 app.get('/admin/insert-groups', (req, res) => {
   getSpecialityUrls((err, result) => {
