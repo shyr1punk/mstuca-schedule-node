@@ -55,8 +55,10 @@ module.exports = (groupId) => {
      * @type {Object} Результат операции insertMany
      */
     .then(lessonsReadyToDB => Lesson.insertMany(lessonsReadyToDB))
+    /**
+     * Обновляем информацию о количестве записей для группы
+     */
     .then(result => {
-      mongoose.connection.close();
       console.log(`Inserted ${result.length} lessons for groupId ${groupId}`);
       return Group
         .findByIdAndUpdate(groupId, {
@@ -64,18 +66,16 @@ module.exports = (groupId) => {
         }, {
           new: true
         })
-        .then(result => {
-          console.log('Update lessonsCount complete');
-          return result.length;
-        }, err => {
-          console.log('Update lessonsCount failed');
-          console.log(err);
-          return result.length;
-        });
+    })
+    .then(result => {
+      mongoose.connection.close();
+      console.log('Update lessonsCount complete');
+      return result.length;
     }, err => {
       mongoose.connection.close();
+      console.log('Update lessonsCount failed');
       console.log(err);
-      return err;
+      return result.length;
     })
     .catch(err => {
       mongoose.connection.close();
