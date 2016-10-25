@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
   });
 });
 
-app.get('/menu', (req, res) => {
+app.get('/api/menu', (req, res) => {
   mongoose.connect(mongodbConnectUrl);
   Promise.all([
     Faculty.find({}),
@@ -38,7 +38,7 @@ app.get('/menu', (req, res) => {
   });
 });
 
-app.get('/schedule/groups/:groupId', (req, res) => {
+app.get('/api/schedule/groups/:groupId', (req, res) => {
   mongoose.connect(mongodbConnectUrl);
   Lesson.find({group: req.params.groupId}).then(
     lessons => {
@@ -52,7 +52,7 @@ app.get('/schedule/groups/:groupId', (req, res) => {
   );
 });
 
-app.get('/schedule/teachers/:teacherName', (req, res) => {
+app.get('/api/schedule/teachers/:teacherName', (req, res) => {
   mongoose.connect(mongodbConnectUrl);
   Lesson.find({teacher: req.params.teacherName}).then(
     lessons => {
