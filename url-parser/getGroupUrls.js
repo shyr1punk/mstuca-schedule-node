@@ -1,7 +1,7 @@
 'use strict';
 /**
  * Парсинг страницы с расписаниями для получения массива ссылок на файлы с расписанием
- * 
+ *
  * @param {string} pageBody html код страницы сайта университета с расписаниями группы
  * @returns
  */
@@ -39,17 +39,25 @@ function getScheduleFilesArray(pageBody) {
 }
 
 /**
- * example input 'OpenDoc(\'/students/schedule/Факультет управления на воздушном транспорте (ФУВТ)/ЭК/ЭКб 4-2.xls\', true);'
+ * Парсинг имени группы из ссылки на скачивание
+ *
+ * @param {String|*} url Строка со ссылкой на скачивание файла, собержащая имя группы
+ * @example 'OpenDoc(\'/students/schedule/Факультет управления на воздушном транспорте (ФУВТ)/ЭК/ЭКб 4-2.xls\', true);'
+ *
+ * @returns {String|null} Имя группы или null в случае отсутствия имени группы в строке
  */
-function parseGroupName(raw) {
-  let result = raw.slice(0, raw.search('.xls'));
-  for (let i = result.length; i !== 0; i--) {
-    if(result[i] == '/') {
-      return result.slice(i + 1);
-    }
+function parseGroupName(url) {
+  if(typeof url !== 'string') {
+    console.error('Парсинг имени группы: переданные параметр не является строкой');
+    return null;
   }
-  console.error('Cannot determine group from raw string: ' + raw);
-  return result;
+  const match = raw.match(/\/(?:.+\/)(.+)\.xls/);
+  if(!match) {
+    console.error('Парсинг имени группы: переданная строка не содержит имя группы. url = ' + url);
+    return null;
+  }
+  // Первая захватываемая группа в регулярном выражении содержит имя группы
+  return match[1];
 }
 
 /**
@@ -61,19 +69,27 @@ function parseGroupURL(raw) {
 
 /**
  * Поиск ссылок на скачиваемые расписания
- * 
+ *
  * @param {Array} groups
  * @returns
  */
 function getGroupURLMapping(groups) {
   return groups
-  // убираем ссылки на не элементы
-  // TODO: сделать более интеллектуальным
+  // если длина массива === 3 - значит это ссылка на файл
   .filter(group => group.length === 3)
-  .map(group => ({
-    group: parseGroupName(group[0].ONCLICK),
-    url: parseGroupURL(group[1].ONCLICK)
-  }));
+  .map(group => {
+    const groupName = parseGroupName(group[0].ONCLICK);
+    // Если имя группы null - значит это не группа
+    if(!groupName) {
+      return null;
+    }
+    return {
+      group: groupName,
+      url: parseGroupURL(group[1].ONCLICK)
+    }
+  })
+  // если элемент массива null - значит не удалось установить имя группы - это ссылка на другой файл
+  .filter(group => group != null);
 }
 
 module.exports = {
