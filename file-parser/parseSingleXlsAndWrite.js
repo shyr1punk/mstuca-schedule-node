@@ -5,7 +5,6 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 const parseXlsFile = require('./index').parseXlsFile;
 const models = require('../models');
 const { Group, Lesson } = models;
-const mongodbConnectUrl = require('../config.js').mongodbConnectUrl;
 
 /**
  * Ищем группу по ID
@@ -20,7 +19,6 @@ const mongodbConnectUrl = require('../config.js').mongodbConnectUrl;
  * @returns {Promise}
  */
 module.exports = (groupId) => {
-  mongoose.connect(mongodbConnectUrl);
   return Group.findById(groupId)
     .then(group => parseXlsFile(group.url))
     /**
@@ -68,17 +66,14 @@ module.exports = (groupId) => {
         })
     })
     .then(result => {
-      mongoose.connection.close();
       console.log('Update lessonsCount complete');
       return result.length;
     }, err => {
-      mongoose.connection.close();
       console.log('Update lessonsCount failed');
       console.log(err);
       return result.length;
     })
     .catch(err => {
-      mongoose.connection.close();
       console.log(err);
       return err;
     });

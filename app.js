@@ -11,6 +11,32 @@ const parseSingleXlsAndWrite = require('./file-parser/parseSingleXlsAndWrite');
 
 const app = express();
 
+mongoose.connect(mongodbConnectUrl);
+
+// CONNECTION EVENTS
+// When successfully connected
+mongoose.connection.on('connected', function () {
+  console.log('Mongoose default connection open to ' + mongodbConnectUrl);
+});
+
+// If the connection throws an error
+mongoose.connection.on('error',function (err) {
+  console.log('Mongoose default connection error: ' + err);
+});
+
+// When the connection is disconnected
+mongoose.connection.on('disconnected', function () {
+  console.log('Mongoose default connection disconnected');
+});
+
+// If the Node process ends, close the Mongoose connection
+process.on('SIGINT', function() {
+  mongoose.connection.close(function () {
+    console.log('Mongoose default connection disconnected through app termination');
+    process.exit(0);
+  });
+});
+
 app.get('/', (req, res) => {
   res.json({
     test: 1
@@ -18,14 +44,12 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/menu', (req, res) => {
-  mongoose.connect(mongodbConnectUrl);
   Promise.all([
     Faculty.find({}),
     Speciality.find({}),
     Group.find({}),
     Lesson.find().distinct('teacher')
   ]).then(results => {
-    mongoose.connection.close();
     res.json({
       faculties: results[0],
       specialities: results[1],
@@ -34,33 +58,26 @@ app.get('/api/menu', (req, res) => {
     });
   }).catch(err => {
     console.log(err);
-    mongoose.connection.close();
   });
 });
 
 app.get('/api/schedule/groups/:groupId', (req, res) => {
-  mongoose.connect(mongodbConnectUrl);
   Lesson.find({group: req.params.groupId}).then(
     lessons => {
-      mongoose.connection.close();
       res.send(lessons);
     },
     err => {
-      mongoose.connection.close();
       res.send(err);
     }
   );
 });
 
 app.get('/api/schedule/teachers/:teacherName', (req, res) => {
-  mongoose.connect(mongodbConnectUrl);
   Lesson.find({teacher: req.params.teacherName}).then(
     lessons => {
-      mongoose.connection.close();
       res.send(lessons);
     },
     err => {
-      mongoose.connection.close();
       res.send(err);
     }
   );
@@ -77,12 +94,28 @@ app.get('/admin/insert-groups', (req, res) => {
 });
 
 app.get('/admin/groups', (req, res) => {
-  mongoose.connect(mongodbConnectUrl);
   Group.find({}).then(groups => {
-    mongoose.connection.close();
     res.json(groups);
   }, err => {
-    mongoose.connection.close();
+    res.send(err);
+  });
+});
+
+
+app.get('/admin/specialities', (req, res) => {
+  Promise.all([
+    Speciality.find({}),
+    Group.aggregate([{$group: {_id: '$speciality', count: {$sum: 1}}}])
+  ]).then(results => {
+    const specialities = results[0];
+    const groupsCountBySpecialityId = results[1].reduce((prev, curr) => {
+      prev[curr._id] = curr.count;
+      return prev;
+    }, {});
+    res.json(specialities.map(speciality =>
+      Object.assign({}, speciality.toObject(), {groupsCount: groupsCountBySpecialityId[speciality._id] || 0})
+    ));
+  }, err => {
     res.send(err);
   });
 });
