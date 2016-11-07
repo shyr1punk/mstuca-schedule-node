@@ -1,4 +1,7 @@
 'use strict';
+
+const http = require('http');
+
 /**
  * Парсинг страницы с расписаниями для получения массива ссылок на файлы с расписанием
  *
@@ -51,7 +54,7 @@ function parseGroupName(url) {
     console.error('Парсинг имени группы: переданные параметр не является строкой');
     return null;
   }
-  const match = raw.match(/\/(?:.+\/)(.+)\.xls/);
+  const match = url.match(/\/(?:.+\/)(.+)\.xls/);
   if(!match) {
     console.error('Парсинг имени группы: переданная строка не содержит имя группы. url = ' + url);
     return null;

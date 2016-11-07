@@ -6,7 +6,7 @@ const mongodbConnectUrl = require('./config.js').mongodbConnectUrl;
 
 const { Faculty, Speciality, Group, Model, Lesson } = Models;
 
-const getSpecialityUrls = require('./saveGroupUrls');
+const { insertGroupsBySpecialityId } = require('./admin/specialities');
 const parseSingleXlsAndWrite = require('./file-parser/parseSingleXlsAndWrite');
 
 const app = express();
@@ -81,16 +81,6 @@ app.get('/api/schedule/teachers/:teacherName', (req, res) => {
       res.send(err);
     }
   );
-})
-
-app.get('/admin/insert-groups', (req, res) => {
-  getSpecialityUrls((err, result) => {
-    if(err) {
-      res.send(err);
-    } else {
-      res.json(result);
-    }
-  })
 });
 
 app.get('/admin/groups', (req, res) => {
@@ -118,6 +108,28 @@ app.get('/admin/specialities', (req, res) => {
   }, err => {
     res.send(err);
   });
+});
+
+app.get('/admin/specialities/:id/insert', (req, res) => {
+  if(typeof req.params.id === 'string') {
+    insertGroupsBySpecialityId(req.params.id).then(docs => {
+      console.log(`${docs.length} groups were successfully stored.`);
+      res.json({
+        result: 'OK',
+        docs
+      })
+    }, error => {
+      res.json({
+        result: 'ERROR',
+        error
+      });
+    })
+  } else {
+    res.json({
+      result: 'ERROR',
+      error: `:id parameter is invalid. Got ${req.params.id}`
+    })
+  }
 });
 
 app.get('/admin/groups/:id/update', (req, res) => {
